@@ -345,6 +345,8 @@ If a parameter is passed, available parameter options:
 		},
 	}
 
+	addVersionListValidFunctionArgs(uninstallCmd, versionManager.Conf, versionManager)
+
 	return uninstallCmd
 }
 
@@ -384,6 +386,8 @@ Available parameter options:
 		},
 	}
 
+	addVersionListValidFunctionArgs(useCmd, conf, versionManager)
+
 	flags := useCmd.Flags()
 	addInstallationFlags(flags, conf, params, &skipSum, &skipSign)
 	addOptionalInstallationFlags(flags, conf, params, &forceInstall, &forceNoInstall)
@@ -418,4 +422,26 @@ func addRemoteFlags(flags *pflag.FlagSet, conf *config.Config, params subCmdPara
 		flags.StringVarP(&conf.GithubToken, "github-token", "t", conf.GithubToken, "GitHub token (increases GitHub REST API rate limits)")
 	}
 	flags.StringVarP(params.pRemote, "remote-url", "u", "", "remote url to install from")
+}
+
+func addVersionListValidFunctionArgs(cmd *cobra.Command, conf *config.Config, versionManager versionmanager.VersionManager) {
+	cmd.ValidArgsFunction = func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
+
+		if len(args) == 0 {
+			conf.InitDisplayer(false)
+
+			dVersions, err := versionManager.ListLocal(false)
+			if err != nil {
+				return nil, cobra.ShellCompDirectiveError
+			}
+
+			var versions []cobra.Completion
+			for _, v := range dVersions {
+				versions = append(versions, v.Version)
+			}
+			return versions, cobra.ShellCompDirectiveNoFileComp
+		}
+
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
 }

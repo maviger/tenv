@@ -426,22 +426,22 @@ func addRemoteFlags(flags *pflag.FlagSet, conf *config.Config, params subCmdPara
 
 func addVersionListValidFunctionArgs(cmd *cobra.Command, conf *config.Config, versionManager versionmanager.VersionManager) {
 	cmd.ValidArgsFunction = func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
-
-		if len(args) == 0 {
-			conf.InitDisplayer(false)
-
-			dVersions, err := versionManager.ListLocal(false)
-			if err != nil {
-				return nil, cobra.ShellCompDirectiveError
-			}
-
-			var versions []cobra.Completion
-			for _, v := range dVersions {
-				versions = append(versions, v.Version)
-			}
-			return versions, cobra.ShellCompDirectiveNoFileComp
+		if len(args) > 0 {
+			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
 
-		return nil, cobra.ShellCompDirectiveNoFileComp
+		conf.InitDisplayer(false)
+
+		dVersions, err := versionManager.ListLocal(false)
+		if err != nil {
+			return nil, cobra.ShellCompDirectiveError
+		}
+
+		versions := make([]cobra.Completion, len(dVersions))
+		for _, v := range dVersions {
+			versions = append(versions, v.Version)
+		}
+		return versions, cobra.ShellCompDirectiveNoFileComp
+
 	}
 }

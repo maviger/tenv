@@ -345,7 +345,7 @@ If a parameter is passed, available parameter options:
 		},
 	}
 
-	addVersionListValidFunctionArgs(uninstallCmd, versionManager.Conf, versionManager)
+	addVersionListValidArgsFunction(uninstallCmd, versionManager.Conf, versionManager)
 
 	return uninstallCmd
 }
@@ -386,7 +386,7 @@ Available parameter options:
 		},
 	}
 
-	addVersionListValidFunctionArgs(useCmd, conf, versionManager)
+	addVersionListValidArgsFunction(useCmd, conf, versionManager)
 
 	flags := useCmd.Flags()
 	addInstallationFlags(flags, conf, params, &skipSum, &skipSign)
@@ -424,7 +424,7 @@ func addRemoteFlags(flags *pflag.FlagSet, conf *config.Config, params subCmdPara
 	flags.StringVarP(params.pRemote, "remote-url", "u", "", "remote url to install from")
 }
 
-func addVersionListValidFunctionArgs(cmd *cobra.Command, conf *config.Config, versionManager versionmanager.VersionManager) {
+func addVersionListValidArgsFunction(cmd *cobra.Command, conf *config.Config, versionManager versionmanager.VersionManager) {
 	cmd.ValidArgsFunction = func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
 		if len(args) > 0 {
 			return nil, cobra.ShellCompDirectiveNoFileComp
